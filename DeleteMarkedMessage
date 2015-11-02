@@ -1,0 +1,34 @@
+//Метод удаляющий письма ежедневно с 00 до 01 ночи.
+function DailyDelete() {
+ var label = GmailApp.getUserLabelByName("DailyDelete");
+ var threads = label.getThreads();
+  if(threads.length!=0){
+    for (var i = 0; i < threads.length; i++) {
+      Logger.log("Delete " + threads[i].getFirstMessageSubject());
+      GmailApp.moveMessagesToTrash(threads[i].getMessages());
+    }
+  }else {Logger.log("Нет сообщений для удаления");}
+  
+ var recipient = Session.getActiveUser().getEmail();
+ var subject = 'Удаленые сообщения';
+ var body = Logger.getLog();
+ MailApp.sendEmail(recipient, subject, body);
+}
+// Метод помечающий письма с меткой "DailyDelete" как прочитаные, с интервалом в 2 часа.
+function MarkRead() {
+ var label = GmailApp.getUserLabelByName("DailyDelete");
+ var threads = label.getThreads();
+
+  if(threads.length!=0){
+    for (var i = 0; i < threads.length; i++) {
+        for(var y = 0; y<threads[i].getMessages().length;y++){
+          if(threads[i].getMessages()[y].isUnread()){
+             Logger.log("MarkRead " + threads[i].getMessages()[y].getSubject());
+             GmailApp.markMessageRead(threads[i].getMessages()[y]);
+          }
+       }
+        
+    
+    }
+  }
+}
